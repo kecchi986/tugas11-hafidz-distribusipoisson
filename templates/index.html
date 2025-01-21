@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poisson Distribution Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #007BFF;
+            border-radius: 5px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .result span {
+            font-weight: bold;
+        }
+        .steps {
+            margin-top: 15px;
+            background: #eef9ff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .steps ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Poisson Distribution Calculator</h1>
+        <form id="poissonForm">
+            <label for="lambda">Mean (λ):</label>
+            <input type="number" id="lambda" name="lambda" required step="any" min="0" placeholder="Enter mean (λ)">
+
+            <label for="k">Occurrences (k):</label>
+            <input type="number" id="k" name="k" required min="0" placeholder="Enter occurrences (k)">
+
+            <button type="submit">Calculate</button>
+        </form>
+
+        <div class="result" id="result">
+            Enter values and press Calculate to see the result.
+        </div>
+
+        <div class="steps" id="steps" style="display: none;">
+            <h3>Steps:</h3>
+            <ul id="calculationSteps">
+                <!-- Steps will be dynamically added here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('poissonForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const lambda = parseFloat(document.getElementById('lambda').value);
+            const k = parseInt(document.getElementById('k').value);
+
+            if (lambda < 0 || k < 0) {
+                document.getElementById('result').innerHTML = "<span>Error:</span> λ and k must be non-negative.";
+                document.getElementById('steps').style.display = "none";
+                return;
+            }
+
+            // Calculate Poisson Probability
+            const factorial = (n) => {
+                if (n === 0 || n === 1) return 1;
+                return n * factorial(n - 1);
+            };
+
+            const lambdaPowerK = Math.pow(lambda, k);
+            const eToMinusLambda = Math.exp(-lambda);
+            const kFactorial = factorial(k);
+            const poissonProbability = (lambdaPowerK * eToMinusLambda) / kFactorial;
+
+            // Display result
+            document.getElementById('result').innerHTML = `<span>Result:</span> P(X = ${k}) = ${poissonProbability.toFixed(6)}`;
+
+            // Display steps
+            const stepsList = document.getElementById('calculationSteps');
+            stepsList.innerHTML = `
+                <li>Substitute λ = ${lambda} and k = ${k} into the formula.</li>
+                <li>Calculate λ<sup>k</sup>: ${lambda}<sup>${k}</sup> = ${lambdaPowerK.toFixed(6)}</li>
+                <li>Calculate e<sup>-λ</sup>: e<sup>-${lambda}</sup> = ${eToMinusLambda.toFixed(6)}</li>
+                <li>Calculate k!: ${k}! = ${kFactorial}</li>
+                <li>Combine values: (${lambdaPowerK.toFixed(6)} × ${eToMinusLambda.toFixed(6)}) / ${kFactorial}</li>
+                <li>Result: P(X = ${k}) = ${poissonProbability.toFixed(6)}</li>
+            `;
+
+            document.getElementById('steps').style.display = "block";
+        });
+    </script>
+</body>
+</html>
